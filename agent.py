@@ -78,7 +78,7 @@ def _summarize_plan(plan: List[Tuple[Pet, Task]], skipped: List[Tuple[Pet, Task]
 
 
 class ScheduleAgent:
-    def __init__(self, mode: str = "mock", model: str = "gemini-2.5-flash"):
+    def __init__(self, mode: str = "mock", model: str = "gemini-3.5-flash"):
         """Builds a schedule-reviewing agent. mode='mock' uses deterministic
         rules and needs no API key. mode='live' calls the Gemini API and
         requires a GEMINI_API_KEY environment variable."""
