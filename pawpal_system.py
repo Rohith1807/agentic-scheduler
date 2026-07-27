@@ -242,8 +242,19 @@ class Scheduler:
 
         return warnings
 
-    def generate_plan(self) -> Tuple[List[Tuple[Pet, Task]], List[Tuple[Pet, Task]]]:
-        """Runs collect, sort, then filter in that fixed order to build today's plan."""
+    def generate_plan(
+        self, force_include_ids: Optional[List[str]] = None
+    ) -> Tuple[List[Tuple[Pet, Task]], List[Tuple[Pet, Task]]]:
+        """Runs collect, sort, then filter in that fixed order. If force_include_ids is given, those tasks are scheduled first
+        (consuming time budget before anything else), letting an external
+        reviewer (like an agent) correct a specific violation without
+        re-deriving the whole plan from scratch."""
         tasks = self.collect_tasks()
-        sorted_tasks = self.sort_by_priority(tasks)
-        return self.filter_by_time(sorted_tasks)
+        force_include_ids = force_include_ids or []
+
+        forced = [pt for pt in tasks if pt[1].id in force_include_ids]
+        rest = [pt for pt in tasks if pt[1].id not in force_include_ids]
+
+        sorted_rest = self.sort_by_priority(rest)
+        ordered = forced + sorted_rest
+        return self.filter_by_time(ordered)
