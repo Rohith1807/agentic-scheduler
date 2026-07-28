@@ -1,0 +1,21 @@
+flowchart TD
+    A[Owner adds Pets/Tasks] --> B[Scheduler.generate_plan]
+    B --> AR{Agent Review}
+    AR -->|Violates constraint| FI[Agent proposes force_include_ids]
+    FI --> B
+    AR -->|Passes review| FP[Final Plan]
+    FP --> LOG[Logged to ai_interactions.md]
+    FP --> DISP[Displayed in app.py / main.py]
+
+    subgraph H[Reliability Harness]
+        S1[Scenario 1: meds_conflict]
+        S2[Scenario 2: ignored_pet]
+        S3[Scenario 3: no_violations]
+        S4[Scenario 4: impossible_budget]
+    end
+
+    S1 --> A
+    S2 --> A
+    S3 --> A
+    S4 --> A
+    FP --> RPT[Pass/Fail + Confidence Report]

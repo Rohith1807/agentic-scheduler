@@ -42,7 +42,7 @@ def scenario_ignored_pet():
     return owner
 
 
-def scenario_already_fine():
+def scenario_no_violations():
     """A plan with no constraint violations. The agent should approve it on
     the first pass without forcing any changes."""
     owner = Owner(name="Test Owner C")
@@ -68,7 +68,7 @@ def scenario_impossible_budget():
 SCENARIOS = {
     "meds_conflict": scenario_meds_conflict,
     "ignored_pet": scenario_ignored_pet,
-    "already_fine": scenario_already_fine,
+    "no_violations": scenario_no_violations,
     "impossible_budget": scenario_impossible_budget,
 }
 
