@@ -1,5 +1,6 @@
 import streamlit as st
 from pawpal_system import Owner, Pet, Task, Scheduler
+from agent import run_agentic_loop
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -187,3 +188,49 @@ if st.button("Generate schedule"):
         st.markdown("**Skipped (not enough time today):**")
         for pet, task in skipped:
             st.write(f"- {pet.name}: {task.name} ({task.duration_minutes} min)")
+
+st.divider()
+st.subheader("🤖 Agentic Review")
+st.caption(
+    "Review the greedy plan against constraints (e.g. meds must never be "
+    "skipped) and auto-correct if a violation is found."
+)
+
+agent_mode = st.radio(
+    "Review mode",
+    ["mock (no API key needed)", "live (real Gemini reasoning)"],
+    horizontal=True,
+)
+
+if st.button("Run Agentic Review"):
+    mode = "mock" if agent_mode.startswith("mock") else "live"
+    with st.spinner("Agent reviewing plan..."):
+        plan, skipped, trace = run_agentic_loop(owner, mode=mode, max_iterations=3)
+
+    for entry in trace:
+        review = entry["review"]
+        with st.expander(
+            f"Iteration {entry['iteration']} — "
+            f"{'✅ Approved' if review['approved'] else '⚠️ Revision needed'}",
+            expanded=not review["approved"] or entry["iteration"] == len(trace),
+        ):
+            st.code(entry["plan_summary"], language="text")
+            if review["issues"]:
+                st.warning("Issues found:")
+                for issue in review["issues"]:
+                    st.write(f"- {issue}")
+            else:
+                st.success("No issues found.")
+            st.caption(f"Confidence: {review['confidence']}")
+
+    st.markdown("### Final Approved Plan")
+    if plan:
+        rows = [
+            {"pet": p.name, "task": t.name, "priority": t.priority, "duration_min": t.duration_minutes}
+            for p, t in plan
+        ]
+        st.table(rows)
+    if skipped:
+        st.caption("Still skipped:")
+        for p, t in skipped:
+            st.write(f"- {p.name}: {t.name}")

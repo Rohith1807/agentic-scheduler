@@ -259,6 +259,19 @@ observed, real limitations: uncalibrated confidence scores (always exactly
 1.0 in live mode) and the API-failure fallback silently approving an
 invalid plan during an actual rate-limit event.
 
+## UI 
+
+### Adding tasks:
+![Task Scheduling](<Screenshot 2026-08-01 112921.png>)
+
+### Mock mode:
+![Fails to accurately schedule tasks, ignoring important tasks](<Screenshot 2026-08-01 111118.png>)
+
+### Agentic Scheduler
+![Live mode on](<Screenshot 2026-08-01 111159.png>)
+![](<Screenshot 2026-08-01 111224.png>)
+
+
 ## Stretch Goals Attempted
 
 ### Agentic Workflow Enhancement
